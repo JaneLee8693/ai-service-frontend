@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { OrderService } from '../../services/order.service';
+
 
 @Component({
   selector: 'app-order-history',
@@ -11,22 +12,29 @@ import { CommonModule } from '@angular/common';
 })
 
 export class OrderHistoryComponent implements OnInit {
-  orders: any[] = [];
+  groupedOrders: { [prompt: string]: any[] } = {};
   loading = false;
   error: string | null = null;
 
-  constructor(private http: HttpClient) {}
+  showModal = false;
+  modalType: 'group' | 'item' | null = null;
+  pendingPrompt = '';
+  pendingItemId = '';
+  deleting = false;
+  toastMessage = '';
+  toastType: 'success' | 'error' | '' = '';
+
+  constructor(private orderService: OrderService) {}
 
   ngOnInit(): void {
-    this.loadOrders();
+    this.fetchOrders();
   }
 
-  loadOrders() {
+  fetchOrders() {
     this.loading = true;
-    this.error = null;
-    this.http.get<any[]>('http://localhost:8081/api/orders').subscribe({
+    this.orderService.getGroupedOrders().subscribe({
       next: (res) => {
-        this.orders = res;
+        this.groupedOrders = res;
         this.loading = false;
       },
       error: () => {
@@ -35,4 +43,50 @@ export class OrderHistoryComponent implements OnInit {
       }
     });
   }
+
+  confirmDelete(type: 'group' | 'item', idOrPrompt: string) {
+    this.modalType = type;
+    this.showModal = true;
+    this.pendingPrompt = type === 'group' ? idOrPrompt : '';
+    this.pendingItemId = type === 'item' ? idOrPrompt : '';
+  }
+
+  cancelDelete() {
+    this.showModal = false;
+    this.modalType = null;
+    this.pendingPrompt = '';
+    this.pendingItemId = '';
+  }
+
+  proceedDelete() {
+    this.deleting = true;
+
+    const req$ =
+      this.modalType === 'group'
+        ? this.orderService.deletePrompt(this.pendingPrompt)
+        : this.orderService.deleteItem(this.pendingItemId);
+
+    req$.subscribe({
+      next: () => {
+        this.toastMessage = 'Deleted successfully';
+        this.toastType = 'success';
+        this.afterDelete();
+      },
+      error: () => {
+        this.toastMessage = 'Delete failed';
+        this.toastType = 'error';
+        this.afterDelete();
+      }
+    });
+  }
+
+  private afterDelete() {
+    this.deleting = false;
+    this.showModal = false;
+    this.pendingPrompt = '';
+    this.pendingItemId = '';
+    this.fetchOrders();
+    setTimeout(() => (this.toastMessage = ''), 3000);
+  }
 }
+

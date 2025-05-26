@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'app-recommendation-form',
@@ -16,24 +17,23 @@ export class RecommendationFormComponent {
   loading = false;
   error: string | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private orderService: OrderService) {}
 
-  submit() {
-    this.loading = true;
-    this.error = null;
-    this.recommendations = [];
 
-    const body = { input: this.userInput };
+submit() {
+  this.loading = true;
+  this.error = null;
+  this.recommendations = [];
 
-    this.http.post<any>('http://localhost:8081/api/ai/recommend', body).subscribe({
-      next: (res) => {
-        this.recommendations = res.data || [];
-        this.loading = false;
-      },
-      error: () => {
-        this.error = 'Error occurred while fetching recommendations';
-        this.loading = false;
-      }
-    });
-  }
+  this.orderService.getRecommendations(this.userInput).subscribe({
+    next: (res) => {
+      this.recommendations = res.data || [];
+      this.loading = false;
+    },
+    error: () => {
+      this.error = 'Error occurred while fetching recommendations';
+      this.loading = false;
+    }
+  });
+}
 }

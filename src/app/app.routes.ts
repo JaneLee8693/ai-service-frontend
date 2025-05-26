@@ -4,6 +4,6 @@ import { OrderHistoryComponent } from './pages/order-history/order-history.compo
 
 export const routes: Routes = [
   { path: '', redirectTo: 'recommend', pathMatch: 'full' },
-  { path: 'recommend', component: RecommendationFormComponent },
-  { path: 'history', component: OrderHistoryComponent }
+  { path: 'recommend', loadComponent: () => import('./pages/recommendation-form/recommendation-form.component').then(m => m.RecommendationFormComponent) },
+  { path: 'history', loadComponent: () => import('./pages/order-history/order-history.component').then(m => m.OrderHistoryComponent) },
 ];
