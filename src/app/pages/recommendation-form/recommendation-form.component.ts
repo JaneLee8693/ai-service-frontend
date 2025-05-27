@@ -19,21 +19,25 @@ export class RecommendationFormComponent {
 
   constructor(private orderService: OrderService) {}
 
+  get username(): string {
+    return localStorage.getItem('username') || '';
+  }
 
-submit() {
-  this.loading = true;
-  this.error = null;
-  this.recommendations = [];
+  submit() {
+    if (!this.userInput.trim()) return;
 
-  this.orderService.getRecommendations(this.userInput).subscribe({
-    next: (res) => {
-      this.recommendations = res.data || [];
-      this.loading = false;
-    },
-    error: () => {
-      this.error = 'Error occurred while fetching recommendations';
-      this.loading = false;
-    }
-  });
-}
+    this.loading = true;
+    this.error = null;
+
+    this.orderService.getRecommendations(this.userInput, this.username).subscribe({
+      next: (res) => {
+        this.recommendations = res.data || [];
+        this.loading = false;
+      },
+      error: () => {
+        this.error = 'Failed to fetch recommendations.';
+        this.loading = false;
+      }
+    });
+  }
 }

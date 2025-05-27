@@ -1,5 +1,15 @@
 <div class="max-w-4xl mx-auto p-6">
-  <h2 class="text-3xl font-bold mb-6 text-[#E63946]">Order History</h2>
+  <h2 class="text-3xl font-bold mb-1">
+    <ng-container *ngIf="username; else plainRec">
+      <div class="text-black">
+        <span class="text-[#e0b84a]">Hello 👋 {{ username }}</span>
+      </div>
+      <div class="text-[#E63946]">Order History</div>
+    </ng-container>
+    <ng-template #plainRec>
+      <div class="text-[#E63946]">Order History</div>
+    </ng-template>
+  </h2>
 
   <div *ngIf="loading" class="text-gray-500">Loading...</div>
   <div *ngIf="error" class="text-red-500">{{ error }}</div>

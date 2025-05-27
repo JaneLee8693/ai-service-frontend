@@ -26,13 +26,18 @@ export class OrderHistoryComponent implements OnInit {
 
   constructor(private orderService: OrderService) {}
 
+  get username(): string {
+    return localStorage.getItem('username') || '';
+  }
+
   ngOnInit(): void {
     this.fetchOrders();
   }
 
   fetchOrders() {
     this.loading = true;
-    this.orderService.getGroupedOrders().subscribe({
+    const username = localStorage.getItem('username') || '';
+    this.orderService.getGroupedOrders(username).subscribe({
       next: (res) => {
         this.groupedOrders = res;
         this.loading = false;
@@ -60,10 +65,11 @@ export class OrderHistoryComponent implements OnInit {
 
   proceedDelete() {
     this.deleting = true;
+    const username = localStorage.getItem('username') || '';
 
     const req$ =
       this.modalType === 'group'
-        ? this.orderService.deletePrompt(this.pendingPrompt)
+        ? this.orderService.deletePrompt(this.pendingPrompt, username)
         : this.orderService.deleteItem(this.pendingItemId);
 
     req$.subscribe({

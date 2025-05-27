@@ -10,22 +10,31 @@ export class OrderService {
 
   constructor(private http: HttpClient) {}
 
-  getRecommendations(userInput: string): Observable<any> {
+  getRecommendations(prompt: string, username: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/ai/recommend`, {
-      text: userInput
+      prompt,
+      username
     });
   }
 
   getOrderHistory(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/orders`);
+    const username = localStorage.getItem('username') || '';
+    return this.http.get<any[]>(`${this.baseUrl}/orders?username=${encodeURIComponent(username)}`);
   }
 
-  getGroupedOrders(): Observable<Record<string, any[]>> {
-    return this.http.get<Record<string, any[]>>(`${this.baseUrl}/orders/grouped`);
+  getGroupedOrders(username: string): Observable<Record<string, any[]>> {
+    return this.http.get<Record<string, any[]>>(`${this.baseUrl}/orders/grouped`, {
+      params: { username }
+    });
   }
 
-  deletePrompt(prompt: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/orders/grouped/${encodeURIComponent(prompt)}`);
+  deletePrompt(prompt: string, username: string): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseUrl}/orders/grouped/${encodeURIComponent(prompt)}`,
+      {
+        params: { username }
+      }
+    );
   }
 
   deleteItem(id: string): Observable<void> {
