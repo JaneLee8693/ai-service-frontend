@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-enter-name',
@@ -11,14 +12,16 @@ import { Router, RouterModule } from '@angular/router';
   styleUrls: ['./enter-name.component.css']
 })
 export class EnterNameComponent {
-  username = '';
+  name: string = '';
 
   constructor(private router: Router) {}
 
-  continue() {
-    if (this.username.trim()) {
-      localStorage.setItem('username', this.username.trim());
-      this.router.navigate(['/recommend']);
-    }
+  submitName() {
+    if (!this.name.trim()) return; // Ensure name is not empty
+
+    const newUuid = uuidv4();
+    localStorage.setItem('username', this.name.trim());
+    localStorage.setItem('uuid', newUuid); // new session UUID
+    this.router.navigate(['/recommend']);
   }
 }

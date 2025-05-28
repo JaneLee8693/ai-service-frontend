@@ -23,13 +23,17 @@ export class RecommendationFormComponent {
     return localStorage.getItem('username') || '';
   }
 
+  get uuid(): string {
+    return localStorage.getItem('uuid') || '';
+  }
+
   submit() {
     if (!this.userInput.trim()) return;
 
     this.loading = true;
     this.error = null;
 
-    this.orderService.getRecommendations(this.userInput, this.username).subscribe({
+    this.orderService.getRecommendations(this.userInput, this.username, this.uuid).subscribe({
       next: (res) => {
         this.recommendations = res.data || [];
         this.loading = false;

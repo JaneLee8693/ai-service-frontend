@@ -1,18 +1,22 @@
-<div class="flex items-center justify-center min-h-screen bg-gray-50">
-  <div class="text-center">
-    <h2 class="text-2xl font-bold mb-4">Who is this order for?</h2>
+<div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+  <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+    <label for="username" class="block text-gray-700 font-medium mb-2 text-sm">
+      Enter your name to continue
+    </label>
     <input
+      id="username"
+      [(ngModel)]="name"
       type="text"
-      [(ngModel)]="username"
-      class="border px-4 py-2 rounded w-64 mb-4"
       placeholder="Enter your name"
+      class="w-full border border-gray-300 p-3 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F4A261]"
     />
-    <br />
     <button
-      (click)="continue()"
-      class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded"
+      (click)="submitName()"
+      class="mt-6 w-full bg-[#E63946] text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-[#F4A261]"
     >
       Continue
     </button>
   </div>
 </div>
+
+
