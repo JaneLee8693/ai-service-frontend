@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrderService {
-  private readonly baseUrl = '/api';
 
   constructor(private http: HttpClient) {}
 
   getRecommendations(prompt: string, username: string, uuid: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/ai/recommend`, {
+    return this.http.post(`${environment.apiBaseUrl}/ai/recommend`, {
       prompt,
       username,
       uuid
@@ -21,7 +21,7 @@ export class OrderService {
   getOrderHistory(): Observable<any[]> {
     const username = localStorage.getItem('username') || '';
     const uuid = localStorage.getItem('uuid') || '';
-    return this.http.get<any[]>(`${this.baseUrl}/orders`, {
+    return this.http.get<any[]>(`${environment.apiBaseUrl}/orders`, {
       params: { username, uuid }
     });
   }
@@ -29,7 +29,7 @@ export class OrderService {
   getGroupedOrders(): Observable<Record<string, any[]>> {
     const username = localStorage.getItem('username') || '';
     const uuid = localStorage.getItem('uuid') || '';
-    return this.http.get<Record<string, any[]>>(`${this.baseUrl}/orders/grouped`, {
+    return this.http.get<Record<string, any[]>>(`${environment.apiBaseUrl}/orders/grouped`, {
       params: { username, uuid }
     });
   }
@@ -38,12 +38,12 @@ export class OrderService {
     const username = localStorage.getItem('username') || '';
     const uuid = localStorage.getItem('uuid') || '';
     return this.http.delete<void>(
-      `${this.baseUrl}/orders/grouped/${encodeURIComponent(prompt)}`,
+      `${environment.apiBaseUrl}/orders/grouped/${encodeURIComponent(prompt)}`,
       { params: { username, uuid } }
     );
   }
 
   deleteItem(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/orders/${id}`);
+    return this.http.delete<void>(`${environment.apiBaseUrl}/orders/${id}`);
   }
 }
